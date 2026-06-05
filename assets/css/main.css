@@ -599,6 +599,14 @@ blockquote {
 
 .project-card:hover .project-icon { opacity: 1; }
 
+.project-icon .brand-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  object-fit: contain;
+  border-radius: 3px;
+  display: block;
+}
+
 .project-name {
   font-size: 1.15rem;
   font-weight: 700;
