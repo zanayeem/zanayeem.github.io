@@ -538,12 +538,13 @@
 <!-- ── Footer ──────────────────────────────────────────────────────────── -->
 <footer>
   <p>
-    &copy; 2025 <a href="#hero">Zannatun Nayeem</a>
+    &copy; <span id="year"></span> <a href="#hero">Zannatun Nayeem</a>
     &nbsp;·&nbsp; <a href="mailto:zanayeem.cse.dev@gmail.com">zanayeem.cse.dev@gmail.com</a>
     &nbsp;·&nbsp; Dhaka, Bangladesh
   </p>
 </footer>
 
 <script src="assets/js/main.js"></script>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
