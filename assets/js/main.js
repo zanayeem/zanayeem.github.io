@@ -3,6 +3,10 @@
 (function () {
   'use strict';
 
+  /* Mark body so CSS can safely animate [data-animate] elements.
+     Without this, all content stays fully visible (no-JS / error fallback). */
+  document.body.classList.add('js-ready');
+
   /* ── Sticky nav ─────────────────────────────────────────────────────── */
   const navbar = document.getElementById('navbar');
 

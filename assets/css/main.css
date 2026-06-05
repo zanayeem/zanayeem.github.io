@@ -61,13 +61,15 @@ section {
 }
 
 /* ─── Scroll Animations ─────────────────────────────────────────────────── */
-[data-animate] {
+/* Only hide elements once JS confirms it's running (.js-ready on body).
+   Without JS the content stays visible — no blank-page risk. */
+body.js-ready [data-animate] {
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
-[data-animate].visible {
+body.js-ready [data-animate].visible {
   opacity: 1;
   transform: none;
 }
