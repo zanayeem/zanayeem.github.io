@@ -1,117 +1,99 @@
-/*
-	Strata by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
-*/
+/* Zannatun Nayeem — portfolio JS (vanilla ES6, no dependencies) */
 
-(function($) {
+(function () {
+  'use strict';
 
-	var $window = $(window),
-		$body = $('body'),
-		$header = $('#header'),
-		$footer = $('#footer'),
-		$main = $('#main'),
-		settings = {
+  /* ── Sticky nav ─────────────────────────────────────────────────────── */
+  const navbar = document.getElementById('navbar');
 
-			// Parallax background effect?
-				parallax: true,
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 80);
+  }, { passive: true });
 
-			// Parallax factor (lower = more intense, higher = less intense).
-				parallaxFactor: 20
+  /* ── Mobile hamburger ───────────────────────────────────────────────── */
+  const toggle     = document.querySelector('.nav-toggle');
+  const mobileMenu = document.getElementById('mobileMenu');
 
-		};
+  toggle.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+  });
 
-	// Breakpoints.
-		breakpoints({
-			xlarge:  [ '1281px',  '1800px' ],
-			large:   [ '981px',   '1280px' ],
-			medium:  [ '737px',   '980px'  ],
-			small:   [ '481px',   '736px'  ],
-			xsmall:  [ null,      '480px'  ],
-		});
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => mobileMenu.classList.remove('open'));
+  });
 
-	// Play initial animations on page load.
-		$window.on('load', function() {
-			window.setTimeout(function() {
-				$body.removeClass('is-preload');
-			}, 100);
-		});
+  document.addEventListener('click', e => {
+    if (!navbar.contains(e.target) && !mobileMenu.contains(e.target)) {
+      mobileMenu.classList.remove('open');
+    }
+  });
 
-	// Touch?
-		if (browser.mobile) {
+  /* ── Active nav highlight on scroll ────────────────────────────────── */
+  const sections  = document.querySelectorAll('section[id], div[id]');
+  const navAnchors = document.querySelectorAll('.nav-links a');
 
-			// Turn on touch mode.
-				$body.addClass('is-touch');
+  const activeSectionObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navAnchors.forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
 
-			// Height fix (mostly for iOS).
-				window.setTimeout(function() {
-					$window.scrollTop($window.scrollTop() + 1);
-				}, 0);
+  sections.forEach(s => activeSectionObserver.observe(s));
 
-		}
+  /* ── Scroll-triggered fade-in animations ───────────────────────────── */
+  const animateObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        animateObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
 
-	// Footer.
-		breakpoints.on('<=medium', function() {
-			$footer.insertAfter($main);
-		});
+  document.querySelectorAll('[data-animate]').forEach(el => {
+    animateObserver.observe(el);
+  });
 
-		breakpoints.on('>medium', function() {
-			$footer.appendTo($header);
-		});
+  /* ── Typing animation ───────────────────────────────────────────────── */
+  const roles = [
+    'Senior DevOps Engineer',
+    'Cloud & Platform Enthusiast',
+    'CKA Certified',
+  ];
 
-	// Header.
+  const typedEl = document.getElementById('typed');
+  let   roleIdx = 0;
+  let   charIdx = 0;
+  let   deleting = false;
 
-		// Parallax background.
+  function tick() {
+    const current = roles[roleIdx];
 
-			// Disable parallax on IE (smooth scrolling is jerky), and on mobile platforms (= better performance).
-				if (browser.name == 'ie'
-				||	browser.mobile)
-					settings.parallax = false;
+    if (!deleting) {
+      typedEl.textContent = current.slice(0, ++charIdx);
+      if (charIdx === current.length) {
+        deleting = true;
+        setTimeout(tick, 1800);
+        return;
+      }
+      setTimeout(tick, 70);
+    } else {
+      typedEl.textContent = current.slice(0, --charIdx);
+      if (charIdx === 0) {
+        deleting  = false;
+        roleIdx   = (roleIdx + 1) % roles.length;
+        setTimeout(tick, 400);
+        return;
+      }
+      setTimeout(tick, 40);
+    }
+  }
 
-			if (settings.parallax) {
+  setTimeout(tick, 900);
 
-				breakpoints.on('<=medium', function() {
-
-					$window.off('scroll.strata_parallax');
-					$header.css('background-position', '');
-
-				});
-
-				breakpoints.on('>medium', function() {
-
-					$header.css('background-position', 'left 0px');
-
-					$window.on('scroll.strata_parallax', function() {
-						$header.css('background-position', 'left ' + (-1 * (parseInt($window.scrollTop()) / settings.parallaxFactor)) + 'px');
-					});
-
-				});
-
-				$window.on('load', function() {
-					$window.triggerHandler('scroll');
-				});
-
-			}
-
-	// Main Sections: Two.
-
-		// Lightbox gallery.
-			$window.on('load', function() {
-
-				$('#two').poptrox({
-					caption: function($a) { return $a.next('h3').text(); },
-					overlayColor: '#2c2c2c',
-					overlayOpacity: 0.85,
-					popupCloserText: '',
-					popupLoaderText: '',
-					selector: '.work-item a.image',
-					usePopupCaption: true,
-					usePopupDefaultStyling: false,
-					usePopupEasyClose: false,
-					usePopupNav: true,
-					windowMargin: (breakpoints.active('<=small') ? 0 : 50)
-				});
-
-			});
-
-})(jQuery);
+})();
